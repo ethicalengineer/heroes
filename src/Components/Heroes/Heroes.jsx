@@ -6,6 +6,7 @@ class Heroes extends React.Component {
     heroes: []
   }
 
+  // Получаем информацию с API по карточкам героев
   componentDidMount() {
     fetch('/users/all')
             .then(response => response.json())
@@ -13,8 +14,9 @@ class Heroes extends React.Component {
             .catch(e => console.log(e));
   }
 
+  // Переход к карточке героя
   getHero = id => {
-      console.log(id);
+    this.props.history.push(`/hero/${id}`);
   }
 
   render() {
