@@ -1,81 +1,143 @@
-import React from 'react'
+import React from 'react';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import {withStyles} from '@material-ui/core/styles';
+import HeroTextField from './Fields/HeroTextField';
+import HeroMultiSelectField from './Fields/HeroMultiSelectField';
+import HeroRepository from '../../Data/Repository/HeroRepository';
+import RoleRepository from '../../Data/Repository/RoleRepository';
+
+const styles = theme => ({
+    formContainer: {
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+        marginLeft: "auto",
+        marginRight: "auto",
+        maxWidth: 350,
+    },
+    formWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: theme.spacing(3, 4),
+    }
+});
 
 class Hero extends React.Component {
+
     state = {
+
+        /**
+         * Герой
+         */
         hero: {
-            name: '',
-            patronymic: '',
+
+            /**
+             * Фамилия
+             */
             surname: '',
-        }
-    }
+
+            /**
+             * Имя
+             */
+            name: '',
+
+            /**
+             * Отчество
+             */
+            patronymic: '',
+
+            /**
+             * Телефон
+             */
+            phone: '',
+
+            /**
+             * Электронная почта
+             */
+            email: '',
+
+            /**
+             * Роли
+             */
+            roles: [],
+
+        },
+
+        /**
+         * Доступные роли
+         */
+        roleItems: [],
+
+    };
 
     componentDidMount() {
-        fetch(`/users?id=${this.props.match.params.id}`)
-                .then(response => response.json())
-                .then(result => {this.setState({hero: result})})
-                .catch(e => console.log(e));
+
+        /* Загрузка ролей */
+        RoleRepository.getRoles()
+            .then(roles => this.setState({roleItems: roles}))
+            .catch(e => console.log(e));
+
+        /* Загрузка героя */
+        HeroRepository.getHero(this.props.match.params.id)
+            .then(hero => this.setState({hero: hero}))
+            .catch(e => console.log(e));
     }
 
-    handleChange = event => {
-        const { name, value } = event.target
-        console.log(event.target)
-
-        this.setState({hero: {
-            ...this.state.hero,
-            [name]: value
-        }})
-    }
+    handleChange = (name, value) => {
+        this.setState({
+            hero: {
+                ...this.state.hero,
+                [name]: value
+            }
+        })
+    };
 
     handleSubmit = event => {
         event.preventDefault();
-
-        fetch('/users', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.state.hero)})
-                .then(response => response.json())
-                .then(result => {
-                    this.props.history.goBack();
-                })
-                .catch(e => console.log(e));
-    
-    }
+        HeroRepository.updateHero(this.state.hero)
+            .then(hero => {
+                this.props.history.push(`/`);
+                // this.props.history.goBack();
+            })
+            .catch(e => console.log(e));
+    };
 
     render() {
-        const { name, patronymic, surname } = this.state.hero
-        return(
-            <form onSubmit={this.handleSubmit}>
-                {/* from here*/}
-                <p>
-                    <label>
-                        Фамилия:
-                        <input name="surname" type="text" value={surname} onChange={this.handleChange} />
-                    </label>
-                </p>
-                {/* to where*/}
-                <p>
-                    <label>
-                        Имя:
-                        <input name="name" type="text" value={name} onChange={this.handleChange} />
-                    </label>
-                </p>
-                <p>
-                    <label>
-                        Отчество:
-                        <input name="patronymic" type="text" value={patronymic} onChange={this.handleChange} />
-                    </label>
-                </p>
-                <input type="submit" value="Отправить" />
-                <select multiple>
-                    <option value="1" selected>Первая роль</option>
-                    <option value="2">Вторая роль</option>
-                    <option value="3" selected>Третья роль</option>
-                </select>
-            </form>
+
+        const {classes} = this.props;
+        const {roleItems} = this.state;
+        const {surname, name, patronymic, phone, email, roles} = this.state.hero;
+
+        return (
+            <Paper className={classes.formContainer}>
+                <form className={classes.formWrapper} onSubmit={this.handleSubmit}>
+
+                    <HeroTextField label="Фамилия" name="surname" value={surname}
+                                   handleChange={this.handleChange}/>
+
+                    <HeroTextField label="Имя" name="name" value={name}
+                                   handleChange={this.handleChange}/>
+
+                    <HeroTextField label="Отчество" name="patronymic" value={patronymic}
+                                   handleChange={this.handleChange}/>
+
+                    <HeroTextField label="Телефон" name="phone" value={phone}
+                                   handleChange={this.handleChange}/>
+
+                    <HeroTextField label="Электронная почта" name="email" value={email}
+                                   handleChange={this.handleChange}/>
+
+                    <HeroMultiSelectField label="Роли" name="roles" values={roles}
+                                          handleChange={this.handleChange}
+                                          items={roleItems} itemLabelProp="role" itemValueProp="id"/>
+
+                    <Button type="submit" variant="contained" color="primary">Отправить</Button>
+
+                </form>
+            </Paper>
         )
     }
 }
 
-export default Hero
+export default withStyles(styles)(Hero);
