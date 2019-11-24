@@ -1,28 +1,36 @@
 import React from 'react';
-import Heroes from './Components/Heroes/Heroes'
-import Hero from './Components/Hero/Hero'
+import Container from '@material-ui/core/Container';
+import {Route, Router, Switch} from 'react-router-dom';
+import Heroes from './Components/Heroes/Heroes';
+import Hero from './Components/Hero/Hero';
+import {createBrowserHistory} from 'history';
+import './app.css';
+import {withStyles} from "@material-ui/core/styles/index";
 
-import { createBrowserHistory } from 'history'
+const styles = theme => ({
+    container: {
+        padding: theme.spacing(2),
+    }
+});
 
-import {
-  Router,
-  Route,
-  Switch
-} from "react-router-dom";
-
-const history = createBrowserHistory()
+const history = createBrowserHistory();
 
 class App extends React.Component {
-  render() {
-    return (
-      <Router history={history}>
-        <Switch>
-          <Route exact path="/" component={Heroes} />
-          <Route path="/hero/:id" component={Hero} />
-        </Switch>
-      </Router>
-    );
-  }
+
+    render() {
+        const {classes} = this.props;
+        return (
+            <Container className={classes.container}>
+                <Router history={history}>
+                    <Switch>
+                        <Route exact path="/" component={Heroes}/>
+                        <Route path="/hero/:id" component={Hero}/>
+                    </Switch>
+                </Router>
+            </Container>
+        );
+    }
+
 }
 
-export default App;
+export default withStyles(styles)(App);
