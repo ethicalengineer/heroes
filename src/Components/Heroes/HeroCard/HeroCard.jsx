@@ -15,4 +15,4 @@ class HeroCard extends React.Component {
     }
 }
 
-export default HeroCard;
+export default HeroCard

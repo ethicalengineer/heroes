@@ -1,4 +1,6 @@
 import React from 'react'
+import HeroField from './HeroField/HeroField'
+import { getHeroRequest, updateHeroRequest } from '../../Api'
 
 class Hero extends React.Component {
     state = {
@@ -9,16 +11,21 @@ class Hero extends React.Component {
         }
     }
 
+    // Загружаем информцию по герою при старте компонента
     componentDidMount() {
-        fetch(`/users?id=${this.props.match.params.id}`)
-                .then(response => response.json())
-                .then(result => {this.setState({hero: result})})
-                .catch(e => console.log(e));
+        this.getHero(this.props.match.params.id);
     }
 
+    // Получаем информацию о герое по ID
+    getHero = id => {
+        getHeroRequest(id)
+        .then(result => {this.setState({hero: result})})
+        .catch(e => console.log(e));
+    }
+
+    // Обрабатываем изменение полей
     handleChange = event => {
         const { name, value } = event.target
-        console.log(event.target)
 
         this.setState({hero: {
             ...this.state.hero,
@@ -26,53 +33,52 @@ class Hero extends React.Component {
         }})
     }
 
+    // Обрабатываем отправку формы
     handleSubmit = event => {
         event.preventDefault();
 
-        fetch('/users', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.state.hero)})
-                .then(response => response.json())
-                .then(result => {
-                    this.props.history.goBack();
-                })
-                .catch(e => console.log(e));
-    
+        updateHeroRequest(this.state.hero)
+        .then(result => {
+            this.props.history.goBack();
+        })
+        .catch(e => console.log(e));
     }
 
     render() {
-        const { name, patronymic, surname } = this.state.hero
+        const { name, patronymic, surname, email, phone } = this.state.hero
         return(
             <form onSubmit={this.handleSubmit}>
-                {/* from here*/}
-                <p>
-                    <label>
-                        Фамилия:
-                        <input name="surname" type="text" value={surname} onChange={this.handleChange} />
-                    </label>
-                </p>
-                {/* to where*/}
-                <p>
-                    <label>
-                        Имя:
-                        <input name="name" type="text" value={name} onChange={this.handleChange} />
-                    </label>
-                </p>
-                <p>
-                    <label>
-                        Отчество:
-                        <input name="patronymic" type="text" value={patronymic} onChange={this.handleChange} />
-                    </label>
-                </p>
+                <HeroField
+                  label="Фамилия"
+                  fieldName="surname"
+                  fieldContent={surname}
+                  changeField={this.handleChange}
+                />
+                <HeroField
+                  label="Имя"
+                  fieldName="name"
+                  fieldContent={name}
+                  changeField={this.handleChange}
+                />
+                <HeroField
+                  label="Отчество"
+                  fieldName="patronymic"
+                  fieldContent={patronymic}
+                  changeField={this.handleChange}
+                />
+                <HeroField
+                  label="Электронная почта"
+                  fieldName="email"
+                  fieldContent={email}
+                  changeField={this.handleChange}
+                />
+                <HeroField
+                  label="Телефон"
+                  fieldName="phone"
+                  fieldContent={phone}
+                  changeField={this.handleChange}
+                />
                 <input type="submit" value="Отправить" />
-                <select multiple>
-                    <option value="1" selected>Первая роль</option>
-                    <option value="2">Вторая роль</option>
-                    <option value="3" selected>Третья роль</option>
-                </select>
             </form>
         )
     }

@@ -1,5 +1,6 @@
 import React from 'react';
 import HeroCard from './HeroCard/HeroCard'
+import { getHeroesRequest, deleteHeroRequest } from '../../Api'
 
 class Heroes extends React.Component {
   state = {
@@ -8,28 +9,22 @@ class Heroes extends React.Component {
 
   // Получаем информацию с API по карточкам героев
   componentDidMount() {
-    fetch('/users/all')
-            .then(response => response.json())
-            .then(result => {this.setState({heroes: result})})
-            .catch(e => console.log(e));
+    this.getHeroes();
   }
 
+  // Получаем список героев
+  getHeroes = () => getHeroesRequest().then(result => {this.setState({heroes: result})}).catch(e => console.log(e));
+
   // Переход к карточке героя
-  getHero = id => {
-    this.props.history.push(`/hero/${id}`);
-  }
+  getHero = id => this.props.history.push(`/hero/${id}`);
 
   // Удаление героя
   deleteHero = (id, event) => {
     event.stopPropagation();
     
-    fetch(`/users?id=${id}`, {
-      method: 'DELETE'})
-          .then(response => response.json())
-          .then(result => {
-              console.log("Deleted Successeful")
-          })
-          .catch(e => console.log(e));
+    deleteHeroRequest(id)
+    .then(result => this.getHeroes())
+    .catch(e => console.log(e));
   }
 
   render() {
