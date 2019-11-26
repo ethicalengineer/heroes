@@ -7,7 +7,12 @@ class HeroField extends React.Component {
             <p>
                 <label>
                     {label}:
-                    <input name={fieldName} type="text" value={fieldContent} onChange={event => changeField(event)} />
+                    <input 
+                      name={fieldName} 
+                      type="text" 
+                      value={fieldContent} 
+                      onChange={event => changeField(event)} 
+                    />
                 </label>
             </p>
         )

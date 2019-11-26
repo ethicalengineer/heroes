@@ -14,4 +14,10 @@ export const updateHeroRequest = hero => fetch('/users', {
 export const getHeroRequest = id => fetch(`/users?id=${id}`).then(response => response.json())
 
 // Удаляем героя с выбранным ID [DELETE]
-export const deleteHeroRequest = id => fetch(`/users?id=${id}`, {method: 'DELETE'}).then(response => response.json())
+export const deleteHeroRequest = id => fetch(`/users?id=${id}`, {method: 'DELETE'}).then(response => {
+    if (response.status === 400) {
+        throw new Error();
+    } else {
+        return response.json
+    }
+})
