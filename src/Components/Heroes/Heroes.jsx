@@ -14,17 +14,18 @@ class Heroes extends React.Component {
   // Удаление героя
   deleteHero = (id, event) => {
     event.stopPropagation();
-    this.props.deleteHero(id);
+    this.props.deleteHero(id)
+        .then(() => this.props.getHeroes());
   }
 
   render() {
     return (
         <div>
           <h1>Hello, Heroes!</h1>
-          {this.props.heroes.map((hero, i) => <HeroCard 
-            getHero={this.getHero} 
+          {this.props.heroes.map(hero => <HeroCard
+            getHero={this.getHero}
             deleteHero={this.deleteHero}
-            key={hero.id} 
+            key={hero.id}
             hero={hero}/>)}
         </div>
     );

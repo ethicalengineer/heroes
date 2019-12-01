@@ -12,9 +12,11 @@ const HeroCard = ({ hero: { name, surname, patronymic, id, phone }, getHero, del
 
 HeroCard.propTypes = {
     hero: PropTypes.shape({
+        id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
         surname: PropTypes.string.isRequired,
-        patronymic: PropTypes.string
+        patronymic: PropTypes.string,
+        phone: PropTypes.string.isRequired,
     })
 }
 

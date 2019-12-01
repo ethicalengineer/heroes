@@ -1,4 +1,4 @@
-import { GET_HEROES_SUCCESS, GET_HEROES_FAILURE, GET_HEROES_REQUEST, DELETE_HERO_SUCCESS } from "../../Actions/heroesActions"
+import {handleActions} from 'redux-actions';
 
 const initialState = {
     heroes: [],
@@ -7,34 +7,40 @@ const initialState = {
     lastDeletedHero: ''
 }
 
-const heroesReducer = (state=initialState, action) => {
-    switch (action.type) {
-        case GET_HEROES_SUCCESS:
-            return {
-                ...state,
-                heroes: action.payload.response,
-                isFetching: false,
-                error: false
-            }
-        case GET_HEROES_FAILURE:
-            return {
-                ...state,
-                isFetching: false,
-                error: true
-            }
-        case GET_HEROES_REQUEST:
-            return {
-                ...state,
-                isFetching: true,
-                error: false
-            }
-        case DELETE_HERO_SUCCESS:
-            return {
-                ...state,
-                lastDeletedHero: action.payload.response
-            }
-        default: return state
-    }
-}
+const heroesReducer = handleActions({
+    GET_HEROES_REQUEST: (state, action) => ({
+        ...state,
+        isFetching: true,
+        error: false
+    }),
+    GET_HEROES_SUCCESS: (state, action) => ({
+        ...state,
+        heroes: action.payload.response,
+        isFetching: false,
+        error: false
+    }),
+    GET_HEROES_FAILURE: (state, action) => ({
+        ...state,
+        isFetching: false,
+        error: true
+    }),
+    DELETE_HERO_REQUEST: (state, action) => ({
+        ...state,
+        isFetching: true,
+        error: false
+    }),
+    DELETE_HERO_SUCCESS: (state, action) => ({
+        ...state,
+        heroes: state.heroes.filter(hero => hero.id !== action.payload.response),
+        lastDeletedHero: action.payload.response,
+        isFetching: false,
+        error: false,
+    }),
+    DELETE_HERO_FAILURE: (state, action) => ({
+        ...state,
+        isFetching: false,
+        error: true
+    }),
+}, initialState);
 
 export default heroesReducer

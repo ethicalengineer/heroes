@@ -1,23 +1,17 @@
-// Получить список всех героев [GET]
-export const getHeroesRequest = () => fetch('/users/all').then(response => response.json())
+import axios from 'axios';
 
-// Обновляем информацию о герое [PUT]
-export const updateHeroRequest = hero => fetch('/users', {
-    method: 'PUT',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(hero)})
-    .then(response => response.json())
+export const api = {
 
-// Получаем информацию о герое [GET]
-export const getHeroRequest = id => fetch(`/users?id=${id}`).then(response => response.json())
+    // Получить список всех героев [GET]
+    getHeroesRequest: () => axios.get('/users/all'),
 
-// Удаляем героя с выбранным ID [DELETE]
-export const deleteHeroRequest = id => fetch(`/users?id=${id}`, {method: 'DELETE'}).then(response => {
-    if (response.status === 400) {
-        throw new Error();
-    } else {
-        return response.json
-    }
-})
+    // Обновляем информацию о герое [PUT]
+    updateHeroRequest: hero => axios.put('/users', hero),
+
+    // Получаем информацию о герое [GET]
+    getHeroRequest: id => axios.get(`/users?id=${id}`),
+
+    // Удаляем героя с выбранным ID [DELETE]
+    deleteHeroRequest: id => axios.delete(`/users?id=${id}`)
+
+}
