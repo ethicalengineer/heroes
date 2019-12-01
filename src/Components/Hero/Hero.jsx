@@ -1,6 +1,6 @@
 import React from 'react'
 import HeroField from './HeroField/HeroField'
-import { getHeroRequest, updateHeroRequest } from '../../Api'
+import { api } from '../../Api'
 
 class Hero extends React.Component {
     state = {
@@ -8,6 +8,8 @@ class Hero extends React.Component {
             name: '',
             patronymic: '',
             surname: '',
+            email:'',
+            phone:''
         }
     }
 
@@ -18,8 +20,8 @@ class Hero extends React.Component {
 
     // Получаем информацию о герое по ID
     getHero = id => {
-        getHeroRequest(id)
-        .then(result => {this.setState({hero: result})})
+        api.getHeroRequest(id)
+        .then(response => {this.setState({hero: response.data})})
         .catch(e => console.log(e));
     }
 
@@ -37,10 +39,8 @@ class Hero extends React.Component {
     handleSubmit = event => {
         event.preventDefault();
 
-        updateHeroRequest(this.state.hero)
-        .then(result => {
-            this.props.history.goBack();
-        })
+        api.updateHeroRequest(this.state.hero)
+        .then(response => {this.props.history.goBack()})
         .catch(e => console.log(e));
     }
 

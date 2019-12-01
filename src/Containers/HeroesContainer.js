@@ -1,54 +1,39 @@
-import { connect } from 'react-redux'
-import { heroesRequest, heroesRequestSuccess, heroesRequestFailure, heroDelete, heroDeleteSuccess, heroDeleteFailure } from '../Actions'
-import { getHeroesRequest, deleteHeroRequest } from '../Api'
+import {connect} from 'react-redux'
+import {
+    getHeroesRequest,
+    getHeroesSuccess,
+    getHeroesFailure,
+    deleteHeroRequest,
+    deleteHeroSuccess,
+    deleteHeroFailure
+} from '../Actions'
+import {api} from '../Api'
 import Heroes from '../Components/Heroes/Heroes'
 
 const mapStateToProps = state => ({
     heroes: state.heroesReducers.heroes
 })
 
-const mapDispatchToProps = (dispatch, state) => ({
+const mapDispatchToProps = dispatch => ({
     getHeroes: () => {
-        dispatch(heroesRequest())
+        dispatch(getHeroesRequest())
 
-        getHeroesRequest()
-        .then(data => dispatch(heroesRequestSuccess(data)))
-        .catch(
-            error => {
-                dispatch(heroesRequestFailure(error))
-            }
-        )
+        return api.getHeroesRequest()
+            .then(response => dispatch(getHeroesSuccess(response.data)))
+            .catch(error => dispatch(getHeroesFailure(error)))
     },
     deleteHero: id => {
-        dispatch(heroDelete())
+        dispatch(deleteHeroRequest())
 
-        deleteHeroRequest(id)
-        .then(data => {
-            dispatch(heroDeleteSuccess(id))
-
-            getHeroesRequest()
-                .then(data => dispatch(heroesRequestSuccess(data)))
-                .catch(
-                    error => {
-                        dispatch(heroesRequestFailure(error))
-                    }
-        )
-        })
-        .catch(
-            error => {
-                dispatch(heroDeleteFailure(error))
-            }
-        )
-
-    //     
-    // .then(result => this.getHeroes())
-    // .catch(e => console.log(e));
+        return api.deleteHeroRequest(id)
+            .then(response => dispatch(deleteHeroSuccess(id)))
+            .catch(error => dispatch(deleteHeroFailure(error)))
     }
 })
 
 const HeroesContainer = connect(
     mapStateToProps,
     mapDispatchToProps
-  )(Heroes)
-  
-  export default HeroesContainer
+)(Heroes)
+
+export default HeroesContainer
